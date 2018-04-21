@@ -1,0 +1,11 @@
+<!--pages/comment/comment.wxml-->
+<view class='container-layout'>
+  <form bindsubmit='confirmClick'>
+    <view class='cancel-publish-layout'>
+      <view class='cancel-btn flex-center' bindtap='clearClick'>清除</view>
+      <button class='confirm-btn flex-center' form-type='submit'>发表</button>
+    </view>
+    <view class='line'></view>
+    <textarea class='info-text' placeholder='期待您的评论...' name='comment' placeholder-style='color:#CCCCCC' value='{{commentMessage}}' bindinput='subscribeCommentInput'></textarea>
+  </form>
+</view>

@@ -1,0 +1,118 @@
+<!--index.wxml-->
+<view class="container-layout">
+  <!--顶部提示-->
+  <view class='top-tips' id='top-tips' wx:if='{{showTopTip}}' bindtap='showNewMarkerClick'>
+    <image class='trumpet-icon' src='../../img/notification.png'></image>
+    <text class='tip-text'>{{warningText}}</text>
+    <image class='right-arrow' src='../../img/right-arrow.png'></image>
+  </view>
+
+  <!--地图-->
+  <view class='map-wrapper' style='height:{{mapHeight}}'>
+    <map class='map' id='myMap' longitude="{{longitude}}" latitude="{{latitude}}" scale="18" show-location="true" markers="{{markers}}" bindmarkertap="bindMakertap" bindcontroltap='controlTap' bindregionchange='regionChange' controls='{{controls}}'></map>
+    <cover-view class='cover-layout' bindtap='selfLocationClick'>
+      <cover-image class='self-location' src='../../img/self-location.png'></cover-image>
+    </cover-view>
+    <cover-view wx:if='{{showUpload}}' class='home-btn-layout' style='left:{{homeActionLeftDistance}}' id='home-action-wrapper'>
+      <cover-image class='home-action-btn' src='../../img/home-btn.png' bindtap='uploadInfoClick'>
+      </cover-image>
+    </cover-view>
+  </view>
+
+  <!--底部布局-->
+  <view class='bottom-layout' id='bottom-layout'>
+    <view class='bottom-wrapper'>
+      <view upload-wrapper wx:if='{{showConfirm}}'>
+
+        <!--点击上传情报-->
+        <form bindsubmit='confirmClick'>
+          <view class='cancel-publish-layout'>
+            <view class='cancel-btn flex-center' bindtap='cancelClick'>取消</view>
+            <button class='confirm-btn flex-center' form-type='submit'>发布</button>
+          </view>
+          <view class='line'></view>
+          <view class='location-wrapper' bindtap='chooseAddress'>
+            <image class='location-icon' src='../../img/location-icon.png'></image>
+            <view class='address-wrapper'>
+              <text class='location-address'>{{selectAddress}}</text>
+            </view>
+          </view>
+          <view class='line-margin'></view>
+          <view class='info-wrapper'>
+            <textarea class='info-text' placeholder='您想对其他人说些什么？' name='message' placeholder-style='color:#CCCCCC'></textarea>
+          </view>
+          <view class='upload-image-root'>
+            <view class='upload-image-wrapper'>
+              <image class='default-image' src='../../img/default-camera-image.png' bindtap='takePhoto' wx:if='{{!uploadImagePath}}'></image>
+              <image class='default-image' src='{{uploadImagePath}}' bindtap='previewSelectImage' wx:if='{{uploadImagePath}}' mode='aspectFill'></image>
+              <!--删除图片的图标-->
+              <image class='delete-image-icon' src='../../img/delete-icon.png' wx:if='{{uploadImagePath}}' bindtap='deleteSelectImage'></image>
+            </view>
+          </view>
+        </form>
+      </view>
+
+      <!--情报信息及评论列表-->
+      <view class='comment-layout' wx:if='{{showComment}}'>
+        <!--上传的情报信息展示-->
+        <view class='warning-info-layout'>
+          <view class='warning-info-wrapper'>
+            <image class='warning-info-icon' src='{{warningIconUrl}}' bindtap='previewImage' wx:if='{{warningIconUrl}}' mode='aspectFill'>
+            </image>
+            <view class='warning-content-wrapper'>
+              <view class='warning-address-wrapper'>
+                <image class='info-icon' src='../../img/location-icon.png'></image>
+                <text class='info-address gray-color'>{{infoAddress}}</text>
+              </view>
+              <view class='warning-address-wrapper' style='margin-top: 15rpx'>
+                <image class='info-icon' src='../../img/warning-info-icon.png'></image>
+                <text class='info-tip'>{{infoMessage}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+        <view class='comment-list-title'>
+          <text class='comment-count'>{{'评论列表（共' + commentList.length + '条）'}}</text>
+        </view>
+        <!--评论列表-->
+        <scroll-view class='comnent-scroll' scroll-y='true'>
+          <view class='comment-item-wrapper' wx:for='{{commentList}}' wx:for-item='item' wx:key='index' wx:if='{{commentList.length != 0}}'>
+            <view class='comment-item'>
+              <image class='comment-avatar' src='{{item.wx_avatar}}'></image>
+              <view class='comment-detail-info'>
+                <text class='comment-name'>{{item.nickname}}</text>
+                <text class='comment-content'>{{item.comment_message}}</text>
+                <text class='comment-time'>{{item.update_date}}</text>
+                <view class='split-line'></view>
+              </view>
+            </view>
+          </view>
+          <!--没有评论时的空布局-->
+          <view class='empty-comment' wx:if='{{commentList.length == 0}}'>
+            <image class='empty-icon' src='../../img/comment-empty.png'></image>
+            <text class='empty-text'>赶紧抢沙发吧~</text>
+          </view>
+        </scroll-view>
+        <view class='line'></view>
+        <!--底部评论点赞-->
+        <view class='buttom-layout'>
+          <view class='new-close-layout' bindtap='colseCommentClick'>
+            <image class='bottom-icon' src='../../img/bottom-close.png'></image>
+            <text class='bottom-text'>退出</text>
+          </view>
+          <!--隐藏-->
+          <input class='bottom-comment-input' placeholder='期待您的评论....' bindinput='subscribeCommentInput' value='{{commentMessage}}' placeholder-style='color:#999999' wx:if='{{false}}'></input>
+          <view class='bottom-comment-view' bindtap='commentClick'>期待您的评论....</view>
+          <view class='bottom-action-layout' bindtap='praiseClick' style='margin-left:10rpx'>
+            <image class='bottom-icon' src='{{praiseSrc}}'></image>
+            <text class='bottom-text'>{{praiseCount}}</text>
+          </view>
+          <button class='bottom-action-layout' style='margin-right:10rpx; background-color: #fff; line-height: 100%;' open-type='share'>
+            <image class='bottom-icon' src='../../img/bottom-share.png'></image>
+            <text class='bottom-text'>转发</text>
+          </button>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
