@@ -64,7 +64,7 @@
                 <image class='info-icon' src='../../img/location-icon.png'></image>
                 <text class='info-address gray-color'>{{infoAddress}}</text>
               </view>
-              <view class='warning-address-wrapper' style='margin-top: 15rpx'>
+              <view class='warning-address-wrapper' style='margin-top: 15rpx' bindtap='showTotalTipInfo'>
                 <image class='info-icon' src='../../img/warning-info-icon.png'></image>
                 <text class='info-tip'>{{infoMessage}}</text>
               </view>

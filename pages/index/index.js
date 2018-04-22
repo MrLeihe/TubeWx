@@ -75,6 +75,8 @@ Page({
     homeActionLeftDistance: '0rpx',
     //最新显示的情报id
     lastNewMarkerId: 0,
+    //单个 marker 情报
+    currentTipInfo: '',
   },
 
   onLoad: function () {
@@ -450,10 +452,11 @@ Page({
             warningIconUrl: info.image,
             infoMessage: info.message,
             infoAddress: info.address,
-            praiseSrc: info.isUp == 1 ? '../../img/praise.png' : '../../img/bottom-unpraise.png',
+            praiseSrc: info.isUp ? '../../img/praise.png' : '../../img/bottom-unpraise.png',
             praiseCount: info.up,
             commentList: dataBean.comment,
-            isUp: info.isUp,
+            isUp: info.isUp ? 1 : 0,
+            currentTipInfo: info.message,
           })
         }
       },
@@ -724,9 +727,11 @@ Page({
       },
       success: function (res) {
         if (res.data.code == 1000) {
+          
           that.setData({
             praiseSrc: '../../img/praise.png',
-            isUp: 1
+            isUp: 1,
+            praiseCount: that.data.praiseCount + 1
           })
         } else {
           that.showModal(res.msg);
@@ -935,6 +940,18 @@ Page({
     var that = this;
     wx.navigateTo({
       url: '../comment/comment?currentMarkerId=' + that.data.currentMarkerId,
+    })
+  },
+
+  /**
+   * 完全展示情报文字
+   */
+  showTotalTipInfo: function(){
+    var that = this;
+    wx.showModal({
+      title: '情报',
+      content: that.data.currentTipInfo,
+      showCancel: false,
     })
   },
 
