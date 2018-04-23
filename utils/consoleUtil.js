@@ -3,7 +3,7 @@
  */
 
 //日志开关，上线发布时是改为false
-const debug = false;
+const debug = true;
 
 function log(content){
   if(debug){

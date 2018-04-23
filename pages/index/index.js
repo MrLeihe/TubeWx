@@ -74,8 +74,14 @@ Page({
     homeActionLeftDistance: '0rpx',
     //最新显示的情报id
     lastNewMarkerId: 0,
+    //最新的情报点纬度
+    lastNewMarkerLat: '',
+    //最新的情报点经度
+    lastNewMarkerLng: '',
     //单个 marker 情报
     currentTipInfo: '',
+    //标示用户是否正在上传情报
+    isUploading: false,
   },
 
   onLoad: function () {
@@ -106,7 +112,6 @@ Page({
 
   onShow: function () {
     consoleUtil.log('onShow--------------------->');
-    consoleUtil.log(this.data.callbackAddressInfo);
     var that = this;
     that.changeMapHeight();
 
@@ -114,7 +119,10 @@ Page({
     consoleUtil.log(that.data.callbackAddressInfo)
     if (that.data.callbackAddressInfo == null) {
       that.getCenterLocation();
-      that.requestLocation();
+      //正在上传的话，不去请求地理位置信息
+      if (!that.data.isUploading) {
+        that.requestLocation();
+      }
     } else {
       that.setData({
         selectAddress: that.data.callbackAddressInfo.title,
@@ -138,9 +146,7 @@ Page({
    * 页面不可见时
    */
   onHide: function () {
-    //清除定时定位任务
-    clearInterval(timer);
-    consoleUtil.log('onHide-------------------->');
+    
   },
 
   /**
@@ -177,13 +183,17 @@ Page({
             that.setData({
               lastNewMarkerId: dataList[0].info_id,
               warningText: dataList[0].message,
-              showTopTip: true
+              showTopTip: true,
+              lastNewMarkerLat: dataList[0].lat,
+              lastNewMarkerLng: dataList[0].lng
             })
           } else {
             that.setData({
               showTopTip: false
             })
           }
+          //请求最新情报后更新map高度
+          that.changeMapHeight();
         } else {
           that.showModal(res.msg);
         }
@@ -198,8 +208,14 @@ Page({
    * 点击顶部横幅提示
    */
   showNewMarkerClick: function () {
-    this.translateMarker(this.data.lastNewMarkerId);
-    this.requestMarkerInfo(this.data.lastNewMarkerId);
+    var that = this;
+    that.setData({
+      longitude: that.data.lastNewMarkerLng, 
+      latitude: that.data.lastNewMarkerLat,
+      currentMarkerId: that.data.lastNewMarkerId
+    })
+    that.requestMarkerInfo();
+    that.adjustViewStatus(false, false, true);
   },
 
   /**
@@ -268,7 +284,11 @@ Page({
               }
             },
             fail: res => {
-
+              wx.showModal({
+                title: '提示',
+                content: '网络错误',
+                showCancel: false,
+              })
             }
           })
         } else {
@@ -390,6 +410,7 @@ Page({
 
   //请求地理位置
   requestLocation: function () {
+    consoleUtil.log('requestLocation----------->请求地理位置')
     var that = this;
     wx.getLocation({
       type: 'gcj02',
@@ -398,8 +419,6 @@ Page({
           latitude: res.latitude,
           longitude: res.longitude,
         })
-        //请求最新情报信息
-        //that.queryNewInfo(res.latitude, res.longitude);
       },
     })
   },
@@ -417,7 +436,16 @@ Page({
     })
     that.adjustViewStatus(false, false, true);
     that.requestMarkerInfo();
-    //that.changeMarkerStyle();
+    //重新设置点击marker为中心点
+    for (var key in that.data.markers){
+      var marker = that.data.markers[key];
+      if (e.markerId == marker.id){
+        that.setData({
+          longitude: marker.longitude,
+          latitude: marker.latitude,
+        })
+      }
+    }
   },
 
   /**
@@ -497,36 +525,6 @@ Page({
   },
 
   /**
-   * 移动到点击的marker
-   */
-  translateMarker: function (markerId) {
-    var that = this;
-    var lat;
-    var lng;
-    var markerList = that.data.markers;
-    for (var key in markerList) {
-      var marker = markerList[key];
-      if (marker.id == markerId) {
-        lat = marker.lat;
-        lng = marker.lng;
-      }
-    }
-    var mapCtx = wx.createMapContext(mapId);
-    mapCtx.translateMarker({
-      markerId: markerId,
-      autoRotate: true,
-      duration: 1000,
-      destination: {
-        latitude: lat,
-        longitude: lng,
-      },
-      animationEnd() {
-        console.log('animation end')
-      }
-    })
-  },
-
-  /**
    * 上传情报
    */
   uploadInfoClick: function () {
@@ -555,6 +553,13 @@ Page({
     var that = this;
     //必须请求定位，不然有时候会回不到当前位置
     that.requestLocation();
+    that.moveTolocation();
+  },
+
+  /**
+   * 移动到中心点
+   */
+  moveTolocation: function(){
     var mapCtx = wx.createMapContext(mapId);
     mapCtx.moveToLocation();
   },
@@ -694,6 +699,7 @@ Page({
       showUpload: uploadStatus,
       showConfirm: confirmStatus,
       showComment: commentStatus,
+      isUploading: confirmStatus,
     })
     that.changeMapHeight();
   },
@@ -714,7 +720,6 @@ Page({
       },
       success: function (res) {
         if (res.data.code == 1000) {
-          
           that.setData({
             praiseSrc: '../../img/praise.png',
             isUp: 1,
@@ -818,6 +823,8 @@ Page({
         that.updateCenterLocation(res.latitude, res.longitude);
         that.regeocodingAddress();
         that.queryMarkerInfo();
+        //请求最新情报信息
+        that.queryNewInfo(res.latitude, res.longitude);
         //第二次把回调的定位数据也置空
         if (that.data.callbackAddressInfo == null && that.data.callbackLocation != null) {
           that.setData({
