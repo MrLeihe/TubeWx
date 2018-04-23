@@ -212,7 +212,7 @@ button::after {
 .warning-info-icon {
   width: 126rpx;
   height: 126rpx;
-  margin-left: 20rpx;
+  margin-right: 20rpx;
 }
 
 .info-icon {
