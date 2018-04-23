@@ -9,7 +9,7 @@
 
   <!--地图-->
   <view class='map-wrapper' style='height:{{mapHeight}}'>
-    <map class='map' id='myMap' longitude="{{longitude}}" latitude="{{latitude}}" scale="18" show-location="true" markers="{{markers}}" bindmarkertap="bindMakertap" bindcontroltap='controlTap' bindregionchange='regionChange' controls='{{controls}}'></map>
+    <map class='map' id='myMap' longitude="{{longitude}}" latitude="{{latitude}}" scale="18" show-location="true" markers="{{markers}}" bindmarkertap="bindMakertap" bindcontroltap='controlTap' bindregionchange='regionChange' controls='{{controls}}' bindtap='bindMapTap'></map>
     <cover-view class='cover-layout' bindtap='selfLocationClick'>
       <cover-image class='self-location' src='../../img/self-location.png'></cover-image>
     </cover-view>
@@ -95,22 +95,27 @@
         </scroll-view>
         <view class='line'></view>
         <!--底部评论点赞-->
-        <view class='buttom-layout'>
-          <view class='new-close-layout' bindtap='colseCommentClick'>
-            <image class='bottom-icon' src='../../img/bottom-close.png'></image>
-            <text class='bottom-text'>退出</text>
+        <view class='buttom-layout-wrapper'>
+          <view class='buttom-layout' wx:if='{{!showCommentInput}}'>
+            <view class='new-close-layout' bindtap='colseCommentClick'>
+              <image class='bottom-icon' src='../../img/bottom-close.png'></image>
+              <text class='bottom-text'>退出</text>
+            </view>
+            <view class='bottom-comment-view' bindtap='commentClick'>这个情报期待您的评论~</view>
+            <view class='bottom-action-layout' bindtap='praiseClick' style='margin-left:10rpx'>
+              <image class='bottom-icon' src='{{praiseSrc}}'></image>
+              <text class='bottom-text'>{{praiseCount}}</text>
+            </view>
+            <button class='bottom-action-layout' style='margin-right:10rpx; background-color: #fff; line-height: 100%;' open-type='share'>
+              <image class='bottom-icon' src='../../img/bottom-share.png'></image>
+              <text class='bottom-text'>转发</text>
+            </button>
           </view>
-          <!--隐藏-->
-          <input class='bottom-comment-input' placeholder='期待您的评论....' bindinput='subscribeCommentInput' value='{{commentMessage}}' placeholder-style='color:#999999' wx:if='{{false}}'></input>
-          <view class='bottom-comment-view' bindtap='commentClick'>期待您的评论....</view>
-          <view class='bottom-action-layout' bindtap='praiseClick' style='margin-left:10rpx'>
-            <image class='bottom-icon' src='{{praiseSrc}}'></image>
-            <text class='bottom-text'>{{praiseCount}}</text>
-          </view>
-          <button class='bottom-action-layout' style='margin-right:10rpx; background-color: #fff; line-height: 100%;' open-type='share'>
-            <image class='bottom-icon' src='../../img/bottom-share.png'></image>
-            <text class='bottom-text'>转发</text>
-          </button>
+
+            <view class='buttom-layout' wx:if='{{showCommentInput}}'>
+              <input class='bottom-comment-input' placeholder='这个情报期待您的评论~' bindinput='subscribeCommentInput' value='{{commentMessage}}' placeholder-style='color:#999999' bindblur='bingblurComment' focus='true'></input>
+              <button class='btn-send-comment' bindtap='submitComment'>发表</button>
+            </view>
         </view>
       </view>
     </view>

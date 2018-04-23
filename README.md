@@ -9,3 +9,6 @@ TODO
 3、点击marker移动到marker
 4、Cannot read property 'regeocoding' of undefined
 14、没有获取到为匿名
+15、加载图片失败处理
+16、点击地图隐藏下面布局
+17、分享带markerId跳转

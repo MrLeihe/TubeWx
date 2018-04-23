@@ -68,8 +68,6 @@ Page({
     currentCity: '',
     //当前区县
     currentDistrict: '',
-    //是否评论回调
-    commentCallback: false,
     showHomeActionIcon: true,
     homeActionLeftDistance: '0rpx',
     //最新显示的情报id
@@ -80,11 +78,19 @@ Page({
     lastNewMarkerLng: '',
     //单个 marker 情报
     currentTipInfo: '',
-    //标示用户是否正在上传情报
-    isUploading: false,
+    //显示评论输入框
+    showCommentInput: false,
+    //评论文字
+    commentMessage: '',
+    //分享携带经度
+    shareLongitude: '',
+    //分享携带纬度
+    shareLatitude: '',
+    //是否是分享点击进入小程序
+    showShare: false,
   },
 
-  onLoad: function () {
+  onLoad: function (options) {
     var that = this;
     if (app.globalData.userInfo) {
       consoleUtil.log(1);
@@ -108,19 +114,28 @@ Page({
       }
     }
     that.scopeSetting();
+    //分享携带情报id， 说明是通过分享的链接进入小程序的
+    if (options.shareMarkerId) {
+      that.setData({
+        showShare: true,
+        shareLongitude: options.shareLng,
+        shareLatitude: options.shareLat,
+        currentMarkerId: options.shareMarkerId
+      })
+    }
   },
 
   onShow: function () {
     consoleUtil.log('onShow--------------------->');
     var that = this;
     that.changeMapHeight();
-
+    that.setHomeActionLeftDistance();
     //如果刚从选择地址页面带数据回调回来，则显示选择的地址
     consoleUtil.log(that.data.callbackAddressInfo)
     if (that.data.callbackAddressInfo == null) {
       that.getCenterLocation();
       //正在上传的话，不去请求地理位置信息
-      if (!that.data.isUploading) {
+      if (that.data.showUpload) {
         that.requestLocation();
       }
     } else {
@@ -133,20 +148,13 @@ Page({
         callbackAddressInfo: null
       })
     }
-    //评论回调需要重新加载当前 marker 信息
-    if (that.data.commentCallback) {
-      that.requestMarkerInfo();
-      that.setData({
-        commentCallback: false
-      })
-    }
   },
 
   /**
    * 页面不可见时
    */
   onHide: function () {
-    
+
   },
 
   /**
@@ -155,13 +163,8 @@ Page({
   requestLocationOnTime: function () {
     var that = this;
     timer = setInterval(function () {
-      consoleUtil.log('requestLocationOnTime---------->');
       that.requestLocation();
     }, 30000)
-  },
-
-  onReady: function () {
-    this.setHomeActionLeftDistance();
   },
 
   /**
@@ -194,12 +197,10 @@ Page({
           }
           //请求最新情报后更新map高度
           that.changeMapHeight();
-        } else {
-          that.showModal(res.msg);
         }
       },
       fail: function (res) {
-        that.showModal(res.msg);
+        that.showModal(res.data.msg);
       }
     })
   },
@@ -210,7 +211,7 @@ Page({
   showNewMarkerClick: function () {
     var that = this;
     that.setData({
-      longitude: that.data.lastNewMarkerLng, 
+      longitude: that.data.lastNewMarkerLng,
       latitude: that.data.lastNewMarkerLat,
       currentMarkerId: that.data.lastNewMarkerId
     })
@@ -225,7 +226,6 @@ Page({
     var that = this;
     wx.getSystemInfo({
       success: function (res) {
-        consoleUtil.log(res);
         windowHeight = res.windowHeight;
         windowWidth = res.windowWidth;
         //创建节点选择器
@@ -415,10 +415,21 @@ Page({
     wx.getLocation({
       type: 'gcj02',
       success: function (res) {
-        that.setData({
-          latitude: res.latitude,
-          longitude: res.longitude,
-        })
+        //第一次加载，如果是分享链接点入，需要跳转到指定marker
+        if (that.data.showShare) {
+          that.setData({
+            showShare: false,
+            longitude: that.data.shareLongitude,
+            latitude: that.data.shareLatitude
+          })
+          that.adjustViewStatus(false, false, true);
+          that.requestMarkerInfo();
+        } else {
+          that.setData({
+            latitude: res.latitude,
+            longitude: res.longitude,
+          })
+        }
       },
     })
   },
@@ -437,9 +448,9 @@ Page({
     that.adjustViewStatus(false, false, true);
     that.requestMarkerInfo();
     //重新设置点击marker为中心点
-    for (var key in that.data.markers){
+    for (var key in that.data.markers) {
       var marker = that.data.markers[key];
-      if (e.markerId == marker.id){
+      if (e.markerId == marker.id) {
         that.setData({
           longitude: marker.longitude,
           latitude: marker.latitude,
@@ -478,7 +489,7 @@ Page({
       fail: function (res) {
         wx.showModal({
           title: '提示',
-          content: res.msg,
+          content: res.data.msg,
           showCancel: false
         });
       }
@@ -559,7 +570,7 @@ Page({
   /**
    * 移动到中心点
    */
-  moveTolocation: function(){
+  moveTolocation: function () {
     var mapCtx = wx.createMapContext(mapId);
     mapCtx.moveToLocation();
   },
@@ -612,7 +623,7 @@ Page({
       } else {
         wx.showModal({
           title: '提示',
-          content: res.msg,
+          content: res.data.msg,
           showCancel: false
         });
       }
@@ -620,7 +631,7 @@ Page({
     var fail = function (res) {
       wx.showModal({
         title: '提示',
-        content: res.msg,
+        content: res.data.msg,
         showCancel: false
       });
     }
@@ -685,6 +696,15 @@ Page({
   },
 
   /**
+   * 点击地图时触发
+   */
+  bindMapTap: function () {
+    consoleUtil.log('bindMapTap------------------->>');
+    //恢复到原始页
+    this.adjustViewStatus(true, false, false);
+  },
+
+  /**
    * 关闭评论 退出当前 marker 显示
    */
   colseCommentClick: function () {
@@ -696,10 +716,12 @@ Page({
   adjustViewStatus: function (uploadStatus, confirmStatus, commentStatus) {
     var that = this;
     that.setData({
+      //显示上传情报按钮
       showUpload: uploadStatus,
+      //开始上传情报
       showConfirm: confirmStatus,
+      //显示情报详情
       showComment: commentStatus,
-      isUploading: confirmStatus,
     })
     that.changeMapHeight();
   },
@@ -726,11 +748,11 @@ Page({
             praiseCount: that.data.praiseCount + 1
           })
         } else {
-          that.showModal(res.msg);
+          that.showModal(res.data.msg);
         }
       },
       fail: function (res) {
-        that.showModal(res.msg);
+        that.showModal(res.data.msg);
       }
     })
   },
@@ -743,8 +765,19 @@ Page({
     });
   },
 
+  /**
+   * 自定义分享
+   */
   onShareAppMessage: function (res) {
-
+    var that = this;
+    //按钮表示已经获取了情报信息，是分享的单个情报
+    if (res.from === 'button') {
+      return {
+        title: that.data.currentTipInfo,
+        //携带 markerId
+        path: 'pages/index/index?shareMarkerId=' + that.data.currentMarkerId + '&shareLng=' + that.data.longitude + '&shareLat=' + that.data.latitude
+      }
+    }
   },
 
   /**
@@ -882,7 +915,7 @@ Page({
       fail: function (res) {
         wx.showModal({
           title: '提示',
-          content: res.msg,
+          content: res.data.msg,
           showCancel: false
         });
       }
@@ -932,15 +965,81 @@ Page({
    */
   commentClick: function () {
     var that = this;
-    wx.navigateTo({
-      url: '../comment/comment?currentMarkerId=' + that.data.currentMarkerId,
+    that.setData({
+      showCommentInput: true
+    })
+    // wx.navigateTo({
+    //   url: '../comment/comment?currentMarkerId=' + that.data.currentMarkerId,
+    // })
+  },
+
+  /**
+   * 输入框失去焦点时
+   */
+  bingblurComment: function (res) {
+    consoleUtil.log('bingblurComment--------------->');
+    consoleUtil.log(res);
+    var that = this;
+    that.setData({
+      showCommentInput: false
+    })
+  },
+
+  /**
+   * 监听输入
+   */
+  subscribeCommentInput: function (e) {
+    this.setData({
+      commentMessage: e.detail.value
+    })
+  },
+
+  /**
+   * 发送评论
+   */
+  submitComment: function () {
+    consoleUtil.log('submitComment----------->')
+    var that = this;
+    if (!that.data.commentMessage) {
+      that.showModal('请写点什么吧~');
+      return;
+    }
+    wx.showLoading({
+      title: '发表中...',
+    });
+    wx.request({
+      url: API.obtainUrl(API.uploadCommentUrl),
+      header: app.globalData.header,
+      data: {
+        info_id: that.data.currentMarkerId,
+        message: that.data.commentMessage
+      },
+      success: function (res) {
+        if (res.data.code == 1000) {
+          //评论成功
+          that.setData({
+            showCommentInput: false,
+            commentMessage: ''
+          })
+          //重新请求marker信息
+          that.requestMarkerInfo();
+        } else {
+          that.showModal(res.data.msg);
+        }
+      },
+      fail: function (res) {
+        that.showModal(res.data.msg);
+      },
+      complete: function () {
+        wx.hideLoading();
+      }
     })
   },
 
   /**
    * 完全展示情报文字
    */
-  showTotalTipInfo: function(){
+  showTotalTipInfo: function () {
     var that = this;
     wx.showModal({
       title: '情报',
