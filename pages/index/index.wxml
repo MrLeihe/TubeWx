@@ -80,7 +80,7 @@
             <view class='comment-item'>
               <image class='comment-avatar' src='{{item.wx_avatar}}'></image>
               <view class='comment-detail-info'>
-                <text class='comment-name'>{{item.nickname}}</text>
+                <text class='comment-name'>{{item.nickname? item.nickname : '匿名'}}</text>
                 <text class='comment-content'>{{item.comment_message}}</text>
                 <text class='comment-time'>{{item.update_date}}</text>
                 <view class='split-line'></view>

@@ -275,11 +275,12 @@ Page({
               'content-type': 'application/json'
             },
             success: res => {
-              //console.log(res.data.data)
+              console.log(res.data.data)
               if (res.data.code == 1000) {
+                consoleUtil.log('sessionid---------------->' + res.data.data.session_id);
                 app.globalData.header.Cookie = 'sessionid=' + res.data.data.session_id;
                 app.globalData.checkStaus = res.data.data.status;
-              } else if (res.data.code == 20001) {
+              } else if (res.data.code == 2001) {
                 app.globalData.header.Cookie = 'sessionid=' + res.data.data.session_id;
               }
             },
@@ -795,9 +796,8 @@ Page({
    */
   takePhoto: function () {
     var that = this;
-    consoleUtil.log('takePhoto');
     wx.chooseImage({
-      sizeType: sizeType[0],
+      sizeType: sizeType[1],
       count: 1,
       success: function (res) {
         that.setData({

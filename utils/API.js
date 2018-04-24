@@ -9,7 +9,7 @@ function obtainUrl(url){
   if(!debug){
     domain = 'https://wxapi.benpaobao.com/traffic/';
   }else{
-    domain = 'http://192.168.1.114:8000/';
+    domain = 'http://192.168.1.114:8000/traffic/';
   }
   console.log('domain---------->' + domain);
   return domain + url;
