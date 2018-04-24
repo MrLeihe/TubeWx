@@ -244,7 +244,6 @@ Page({
           that.setData({
             homeActionLeftDistance: ((windowWidth - res[0].width) / 2) + 'px'
           })
-          consoleUtil.log('homeActionLeftDistance------>' + that.data.homeActionLeftDistance);
         })
       }
     })
@@ -318,7 +317,6 @@ Page({
           consoleUtil.log(res);
           count += 1;
           topHeight = res[0].height;
-          consoleUtil.log('topHeight------------>' + topHeight);
           that.setMapHeight(count);
         })
 
@@ -340,7 +338,6 @@ Page({
       that.setData({
         mapHeight: (windowHeight - topHeight - bottomHeight) + 'px'
       })
-      consoleUtil.log('mapHeight------------>' + that.data.mapHeight);
     }
     var controlsWidth = 40;
     var controlsHeight = 48;
@@ -403,7 +400,6 @@ Page({
    */
   initMap: function () {
     var that = this;
-    console.log(constant.tencentAk);
     qqmapsdk = new QQMapWX({
       key: constant.tencentAk
     });
@@ -412,7 +408,6 @@ Page({
 
   //请求地理位置
   requestLocation: function () {
-    consoleUtil.log('requestLocation----------->请求地理位置')
     var that = this;
     wx.getLocation({
       type: 'gcj02',
@@ -441,7 +436,6 @@ Page({
    */
   bindMakertap: function (e) {
     consoleUtil.log('点击了marker');
-    consoleUtil.log(e);
     var that = this;
     //设置当前点击的id
     that.setData({
@@ -498,7 +492,6 @@ Page({
    * 改变选中的 marker 的样式
    */
   changeMarkerStyle: function () {
-    consoleUtil.log('changeMarkerStyle------------>');
     var that = this;
     var markerList = that.data.markers;
     for (var key in markerList) {
@@ -558,7 +551,6 @@ Page({
    * 回到定位点
    */
   selfLocationClick: function () {
-    consoleUtil.log('selfLocationClick--------------->');
     var that = this;
     //必须请求定位，不然有时候会回不到当前位置
     that.requestLocation();
@@ -679,7 +671,6 @@ Page({
    * 点击地图时触发
    */
   bindMapTap: function () {
-    consoleUtil.log('bindMapTap------------------->>');
     //恢复到原始页
     this.adjustViewStatus(true, false, false);
   },
@@ -852,6 +843,10 @@ Page({
    */
   regeocodingAddress: function () {
     var that = this;
+    //不在发布页面，不进行逆地址解析
+    if (!that.data.showConfirm){
+      return;
+    }
     //通过经纬度解析地址
     qqmapsdk.reverseGeocoder({
       location: {
