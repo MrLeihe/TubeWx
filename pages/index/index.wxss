@@ -43,6 +43,10 @@
   height: 256rpx;
 }
 
+.top-layout{
+  width: 100%;
+}
+
 .top-tips {
   height: 60rpx;
   width: 100%;

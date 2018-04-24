@@ -197,10 +197,12 @@ Page({
           }
           //请求最新情报后更新map高度
           that.changeMapHeight();
-        }else{
+        } else {
           that.setData({
             showTopTip: false
           })
+          //请求最新情报后更新map高度
+          that.changeMapHeight();
         }
       },
       fail: function (res) {
@@ -289,11 +291,7 @@ Page({
               }
             },
             fail: res => {
-              wx.showModal({
-                title: '提示',
-                content: '网络错误',
-                showCancel: false,
-              })
+              that.showModal('网络错误');
             }
           })
         } else {
@@ -314,15 +312,14 @@ Page({
         //创建节点选择器
         var query = wx.createSelectorQuery();
         //选择id
-        query.select('#top-tips').boundingClientRect()
+        query.select('#top-layout').boundingClientRect()
         query.exec(function (res) {
           //res就是 所有标签为mjltest的元素的信息 的数组
           consoleUtil.log(res);
           count += 1;
-          if (that.data.showTopTip) {
-            topHeight = res[0].height;
-            that.setMapHeight(count);
-          }
+          topHeight = res[0].height;
+          consoleUtil.log('topHeight------------>' + topHeight);
+          that.setMapHeight(count);
         })
 
         var query = wx.createSelectorQuery();
@@ -492,11 +489,7 @@ Page({
         }
       },
       fail: function (res) {
-        wx.showModal({
-          title: '提示',
-          content: res.data.msg,
-          showCancel: false
-        });
+        that.showModal(res.data.msg);
       }
     })
   },
@@ -594,19 +587,11 @@ Page({
     consoleUtil.log(res);
     var message = res.detail.value.message.trim();
     if (!that.data.centerLatitude || !that.data.centerLongitude) {
-      wx.showModal({
-        title: '提示',
-        content: '请选择上传地点~',
-        showCancel: false,
-      })
+      that.showModal('请选择上传地点~');
       return;
     }
     if (!message) {
-      wx.showModal({
-        title: '提示',
-        content: '请说点什么吧~',
-        showCancel: false,
-      })
+      that.showModal('请说点什么吧~');
       return;
     }
     //成功
@@ -618,34 +603,24 @@ Page({
       }
       consoleUtil.log(data);
       if (data.code == 1000) {
-        wx.showModal({
-          title: '提示',
-          content: '上传成功',
-          showCancel: false
-        });
+        wx.showToast({
+          title: '发布成功',
+        })
         that.resetPhoto();
         that.adjustViewStatus(true, false, false);
       } else {
-        wx.showModal({
-          title: '提示',
-          content: res.data.msg,
-          showCancel: false
-        });
+        that.showModal(res.data.msg);
       }
     }
     var fail = function (res) {
-      wx.showModal({
-        title: '提示',
-        content: res.data.msg,
-        showCancel: false
-      });
+      that.showModal(res.data.msg);
     }
 
     var complete = function (res) {
       wx.hideLoading();
     }
     wx.showLoading({
-      title: '提交中...',
+      title: '发布中...',
     })
     //设置需要上传的经纬度(如果有回调的地址，则使用回调的经纬度,否则使用中心点坐标)
     var lat;
@@ -660,7 +635,6 @@ Page({
       lng = that.data.centerLongitude;
     }
     consoleUtil.log('lat----->' + lat + '---lng----->' + lng);
-    //如果上传了图片使用 uploadFile，否则使用 request
     var uploadData = {
       lat: lat,
       lng: lng,
@@ -670,6 +644,7 @@ Page({
       city: that.data.currentCity,
       district: that.data.currentDistrict,
     }
+    //如果上传了图片使用 uploadFile，否则使用 request
     if (that.data.uploadImagePath) {
       wx.uploadFile({
         url: API.obtainUrl(API.uploadInfoUrl),
@@ -917,11 +892,7 @@ Page({
         }
       },
       fail: function (res) {
-        wx.showModal({
-          title: '提示',
-          content: res.data.msg,
-          showCancel: false
-        });
+        that.showModal(res.data.msg);
       }
     })
   },

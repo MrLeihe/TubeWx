@@ -1,10 +1,12 @@
 <!--index.wxml-->
 <view class="container-layout">
   <!--顶部提示-->
-  <view class='top-tips' id='top-tips' wx:if='{{showTopTip}}' bindtap='showNewMarkerClick'>
-    <image class='trumpet-icon' src='../../img/notification.png'></image>
-    <text class='tip-text'>{{warningText}}</text>
-    <image class='right-arrow' src='../../img/right-arrow.png'></image>
+  <view class='top-layout' id='top-layout'>
+    <view class='top-tips' wx:if='{{showTopTip}}' bindtap='showNewMarkerClick'>
+      <image class='trumpet-icon' src='../../img/notification.png'></image>
+      <text class='tip-text'>{{warningText}}</text>
+      <image class='right-arrow' src='../../img/right-arrow.png'></image>
+    </view>
   </view>
 
   <!--地图-->
@@ -112,10 +114,10 @@
             </button>
           </view>
 
-            <view class='buttom-layout' wx:if='{{showCommentInput}}'>
-              <input class='bottom-comment-input' placeholder='这个情报期待您的评论~' bindinput='subscribeCommentInput' value='{{commentMessage}}' placeholder-style='color:#999999' bindblur='bingblurComment' focus='true'></input>
-              <button class='btn-send-comment' bindtap='submitComment'>发表</button>
-            </view>
+          <view class='buttom-layout' wx:if='{{showCommentInput}}'>
+            <input class='bottom-comment-input' placeholder='这个情报期待您的评论~' bindinput='subscribeCommentInput' value='{{commentMessage}}' placeholder-style='color:#999999' bindblur='bingblurComment' focus='true'></input>
+            <button class='btn-send-comment' bindtap='submitComment'>发表</button>
+          </view>
         </view>
       </view>
     </view>
