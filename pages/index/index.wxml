@@ -78,7 +78,7 @@
         <scroll-view class='comnent-scroll' scroll-y='true'>
           <view class='comment-item-wrapper' wx:for='{{commentList}}' wx:for-item='item' wx:key='index' wx:if='{{commentList.length != 0}}'>
             <view class='comment-item'>
-              <image class='comment-avatar' src='{{item.wx_avatar}}'></image>
+              <image class='comment-avatar' src='{{item.wx_avatar? item.wx_avatar : "../../img/default-avatar.png"}}'></image>
               <view class='comment-detail-info'>
                 <text class='comment-name'>{{item.nickname? item.nickname : '匿名'}}</text>
                 <text class='comment-content'>{{item.comment_message}}</text>

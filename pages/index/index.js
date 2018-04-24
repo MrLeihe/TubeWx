@@ -197,6 +197,10 @@ Page({
           }
           //请求最新情报后更新map高度
           that.changeMapHeight();
+        }else{
+          that.setData({
+            showTopTip: false
+          })
         }
       },
       fail: function (res) {
