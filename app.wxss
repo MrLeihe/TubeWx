@@ -1,6 +1,6 @@
 /**app.wxss**/
 
-@import "dist/index.wxss";
+
 
 .container {
   height: 100%;

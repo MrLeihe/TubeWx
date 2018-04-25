@@ -187,7 +187,7 @@ Page({
           if (dataList.length != 0) {
             that.setData({
               lastNewMarkerId: dataList[0].info_id,
-              warningText: dataList[0].message,
+              warningText: '地点：' + dataList[0].address + '-情报：' + dataList[0].message,
               showTopTip: true,
               lastNewMarkerLat: dataList[0].lat,
               lastNewMarkerLng: dataList[0].lng
