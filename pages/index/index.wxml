@@ -4,7 +4,9 @@
   <view class='top-layout' id='top-layout'>
     <view class='top-tips' wx:if='{{showTopTip}}' bindtap='showNewMarkerClick'>
       <image class='trumpet-icon' src='../../img/notification.png'></image>
-      <text class='tip-text'>{{warningText}}</text>
+      <view class='marquee'>
+        <text class='content'>{{warningText}}</text>
+      </view>
       <image class='right-arrow' src='../../img/right-arrow.png'></image>
     </view>
   </view>
@@ -83,9 +85,11 @@
             <view class='comment-item'>
               <image class='comment-avatar' src='{{item.wx_avatar? item.wx_avatar : "../../img/default-avatar.png"}}'></image>
               <view class='comment-detail-info'>
-                <text class='comment-name'>{{item.nickname? item.nickname : '匿名'}}</text>
+                <view class='comment-name-wrapper'>
+                  <text class='comment-name'>{{item.nickname? item.nickname : '匿名'}}</text>
+                  <text class='comment-time'>{{item.update_date}}</text>
+                </view>
                 <text class='comment-content'>{{item.comment_message}}</text>
-                <text class='comment-time'>{{item.update_date}}</text>
                 <view class='split-line'></view>
               </view>
             </view>

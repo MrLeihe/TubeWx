@@ -43,7 +43,7 @@
   height: 256rpx;
 }
 
-.top-layout{
+.top-layout {
   width: 100%;
 }
 
@@ -71,6 +71,42 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+@keyframes kf-marque-animation {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-33.3%);
+  }
+}
+
+.marquee{
+  flex: 1;
+  margin-left: 20rpx;
+  margin-right: 20rpx;
+  height: 100%;
+  display: block;
+  margin: 0 auto;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: clip;
+  position: relative;
+}
+
+.marquee .content{
+  width: 100%;
+  font-size: 28rpx;
+  color: #ff555c;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  position: relative;
+  padding-right: 0px;
+  white-space: nowrap;
+  animation: kf-marque-animation 11.3s linear infinite;
 }
 
 .right-arrow {
@@ -366,6 +402,12 @@ button::after {
   flex-direction: column;
 }
 
+
+.comment-name-wrapper{
+  flex: 1;
+  
+}
+
 .comment-name {
   font-size: 28rpx;
   color: #666;
@@ -574,7 +616,7 @@ button::after {
   margin-left: 40rpx;
 }
 
-.buttom-layout-wrapper{
+.buttom-layout-wrapper {
   width: 100%;
   height: 110rpx;
 }
@@ -590,7 +632,7 @@ button::after {
   margin-right: 10rpx;
 }
 
-.btn-send-comment{
+.btn-send-comment {
   width: 110rpx;
   font-size: 26rpx;
   height: 70rpx;
