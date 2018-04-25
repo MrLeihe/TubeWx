@@ -33,6 +33,8 @@ Page({
     hasUserInfo: false,
     longitude: '',
     latitude: '',
+    //地图缩放级别
+    scale: 16,
     markers: [],
     showTopTip: false,
     warningText: '',
@@ -552,7 +554,11 @@ Page({
    */
   selfLocationClick: function () {
     var that = this;
-    //必须请求定位，不然有时候会回不到当前位置
+    //还原默认缩放级别
+    that.setData({
+      scale: 16
+    })
+    //必须请求定位，改变中心点坐标
     that.requestLocation();
     that.moveTolocation();
   },
