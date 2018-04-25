@@ -428,6 +428,7 @@ Page({
             latitude: res.latitude,
             longitude: res.longitude,
           })
+          that.moveTolocation();
         }
       },
     })
@@ -560,7 +561,6 @@ Page({
     })
     //必须请求定位，改变中心点坐标
     that.requestLocation();
-    that.moveTolocation();
   },
 
   /**
