@@ -48,7 +48,7 @@
 }
 
 .top-tips {
-  height: 60rpx;
+  height: 80rpx;
   width: 100%;
   background-color: #fdffe8;
   display: flex;
