@@ -35,3 +35,6 @@ function friendly_time(time_stamp) {
   return f_time;
 }
 
+module.exports = {
+  friendly_time: friendly_time
+}

@@ -1,21 +1,23 @@
 <!--index.wxml-->
 <view class="container-layout">
-  <!--顶部提示-->
-  <view class='top-layout' id='top-layout'>
-    <view class='top-tips' wx:if='{{showTopTip}}' bindtap='showNewMarkerClick'>
-      <image class='trumpet-icon' src='../../img/notification.png'></image>
-      <text class='tip-text'>{{warningText}}</text>
-      <image class='right-arrow' src='../../img/right-arrow.png'></image>
-    </view>
-  </view>
 
   <!--地图-->
   <view class='map-wrapper' style='height:{{mapHeight}}'>
     <map class='map' id='myMap' longitude="{{longitude}}" latitude="{{latitude}}" scale="{{scale}}" show-location="true" markers="{{markers}}" bindmarkertap="bindMakertap" bindcontroltap='controlTap' bindregionchange='regionChange' controls='{{controls}}'
-      bindtap='bindMapTap'></map>
+      bindtap='bindMapTap'>
+      <!--顶部提示-->
+      <cover-view class='cover-tip-wrapper' wx:if='{{showTopTip}}' bindtap='showNewMarkerClick'>
+        <cover-image class='trumpet-icon' src='../../img/notification.png'>
+        </cover-image>
+        <cover-view class='tip-text'>{{warningText}}</cover-view>
+        <cover-image class='right-arrow' src='../../img/right-arrow.png'></cover-image>
+      </cover-view>
+    </map>
+    <!--定位当前位置-->
     <cover-view class='cover-layout' bindtap='selfLocationClick'>
       <cover-image class='self-location' src='../../img/self-location.png'></cover-image>
     </cover-view>
+    <!--上传情报按钮-->
     <cover-view wx:if='{{showUpload}}' class='home-btn-layout' style='left:{{homeActionLeftDistance}}' id='home-action-wrapper'>
       <cover-image class='home-action-btn' src='../../img/home-btn.png' bindtap='uploadInfoClick'>
       </cover-image>
@@ -85,7 +87,7 @@
               <view class='comment-detail-info'>
                 <view class='comment-name-wrapper'>
                   <text class='comment-name'>{{item.nickname? item.nickname : '匿名'}}</text>
-                  <text class='comment-time'>{{item.update_date}}</text>
+                  <text class='comment-time'>{{item.createTime}}</text>
                 </view>
                 <text class='comment-content'>{{item.comment_message}}</text>
                 <view class='split-line'></view>

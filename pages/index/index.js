@@ -1,14 +1,15 @@
 //index.js
 //获取应用实例
 const app = getApp();
+const defaultScale = 14;
 var API = require('../../utils/API.js');
 var consoleUtil = require('../../utils/consoleUtil.js');
 var coordtransform = require('../../utils/coordtransform.js');
 var constant = require('../../utils/constant.js');
 var QQMapWX = require('../../libs/qqmap-wx-jssdk.js');
+const timeUtil = require('../../utils/timeUtil.js');
 //定义全局变量
 var wxMarkerData = [];
-var topHeight = 0;
 var bottomHeight = 0;
 var windowHeight = 0;
 var windowWidth = 0;
@@ -34,7 +35,7 @@ Page({
     longitude: '',
     latitude: '',
     //地图缩放级别
-    scale: 14,
+    scale: defaultScale,
     markers: [],
     showTopTip: false,
     warningText: '',
@@ -234,6 +235,9 @@ Page({
    */
   setHomeActionLeftDistance: function () {
     var that = this;
+    if (!that.data.showUpload){
+      return;
+    }
     wx.getSystemInfo({
       success: function (res) {
         windowHeight = res.windowHeight;
@@ -314,23 +318,13 @@ Page({
         windowWidth = res.windowWidth;
         //创建节点选择器
         var query = wx.createSelectorQuery();
-        //选择id
-        query.select('#top-layout').boundingClientRect()
-        query.exec(function (res) {
-          //res就是 所有标签为mjltest的元素的信息 的数组
-          consoleUtil.log(res);
-          count += 1;
-          topHeight = res[0].height;
-          that.setMapHeight(count);
-        })
 
         var query = wx.createSelectorQuery();
         query.select('#bottom-layout').boundingClientRect()
         query.exec(function (res) {
           consoleUtil.log(res);
           bottomHeight = res[0].height;
-          count += 1;
-          that.setMapHeight(count);
+          that.setMapHeight();
         })
       },
     })
@@ -338,11 +332,9 @@ Page({
 
   setMapHeight: function (params) {
     var that = this;
-    if (params == 2) {
-      that.setData({
-        mapHeight: (windowHeight - topHeight - bottomHeight) + 'px'
-      })
-    }
+    that.setData({
+      mapHeight: (windowHeight - bottomHeight) + 'px'
+    })
     var controlsWidth = 40;
     var controlsHeight = 48;
     //设置中间部分指针
@@ -352,7 +344,7 @@ Page({
         iconPath: '../../img/center-location.png',
         position: {
           left: (windowWidth - controlsWidth) / 2,
-          top: (windowHeight - topHeight - bottomHeight) / 2 - controlsHeight * 3 / 4,
+          top: (windowHeight - bottomHeight) / 2 - controlsHeight * 3 / 4,
           width: controlsWidth,
           height: controlsHeight
         },
@@ -481,9 +473,16 @@ Page({
             infoAddress: info.address,
             praiseSrc: info.isUp ? '../../img/praise.png' : '../../img/bottom-unpraise.png',
             praiseCount: info.up,
-            commentList: dataBean.comment,
             isUp: info.isUp ? 1 : 0,
             currentTipInfo: info.message,
+          })
+          //转换为友好时间
+          for (var key in dataBean.comment) {
+            var commentBean = dataBean.comment[key];
+            commentBean.createTime = timeUtil.friendly_time(commentBean.creat_timestamp);
+          }
+          that.setData({
+            commentList: dataBean.comment,
           })
         }
       },
@@ -559,7 +558,7 @@ Page({
     var that = this;
     //还原默认缩放级别
     that.setData({
-      scale: 16
+      scale: defaultScale
     })
     //必须请求定位，改变中心点坐标
     that.requestLocation();
@@ -756,6 +755,10 @@ Page({
         //携带 markerId
         path: 'pages/index/index?shareMarkerId=' + that.data.currentMarkerId + '&shareLng=' + that.data.longitude + '&shareLat=' + that.data.latitude
       }
+    }else{
+      return {
+        title: '\“隐了没\”了解一下',
+      }
     }
   },
 
@@ -852,7 +855,7 @@ Page({
   regeocodingAddress: function () {
     var that = this;
     //不在发布页面，不进行逆地址解析
-    if (!that.data.showConfirm){
+    if (!that.data.showConfirm) {
       return;
     }
     //通过经纬度解析地址
@@ -1030,7 +1033,7 @@ Page({
    * 版本更新
    */
   checkUpdate: function () {
-    if (wx.canIUse('getUpdateManager')){
+    if (wx.canIUse('getUpdateManager')) {
       const updateManager = wx.getUpdateManager();
       updateManager.onCheckForUpdate(function (res) {
         // 请求完新版本信息的回调
@@ -1056,7 +1059,7 @@ Page({
       })
     }
   },
-  
+
   getUserInfo: function (e) {
     console.log(e)
     app.globalData.userInfo = e.detail.userInfo
