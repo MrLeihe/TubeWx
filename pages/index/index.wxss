@@ -83,30 +83,23 @@
   }
 }
 
-.marquee{
+.marquee_box {
   flex: 1;
-  margin-left: 20rpx;
-  margin-right: 20rpx;
   height: 100%;
-  display: block;
-  margin: 0 auto;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: clip;
   position: relative;
+  overflow: hidden;
 }
 
-.marquee .content{
-  width: 100%;
-  font-size: 28rpx;
+.marquee-wrapper{
+  width: 8000%;
+  height: 100%;
+}
+
+.marquee_text {
   color: #ff555c;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: inline-block;
-  position: relative;
-  padding-right: 0px;
-  white-space: nowrap;
-  animation: kf-marque-animation 11.3s linear infinite;
+  font-size: 32rpx;
+  margin: 0 auto;
+  float: left;
 }
 
 .right-arrow {
@@ -402,10 +395,8 @@ button::after {
   flex-direction: column;
 }
 
-
-.comment-name-wrapper{
+.comment-name-wrapper {
   flex: 1;
-  
 }
 
 .comment-name {
@@ -494,7 +485,7 @@ button::after {
   width: 128rpx;
   height: 100%;
   color: #666;
-  font-size: 30rpx;
+  font-size: 36rpx;
   font-weight: bold;
 }
 
@@ -502,7 +493,7 @@ button::after {
   width: 128rpx;
   height: 100%;
   color: #32c7a6;
-  font-size: 30rpx;
+  font-size: 36rpx;
   position: absolute;
   right: 0;
   background-color: #fff;

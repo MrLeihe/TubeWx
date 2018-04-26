@@ -4,9 +4,7 @@
   <view class='top-layout' id='top-layout'>
     <view class='top-tips' wx:if='{{showTopTip}}' bindtap='showNewMarkerClick'>
       <image class='trumpet-icon' src='../../img/notification.png'></image>
-      <view class='marquee'>
-        <text class='content'>{{warningText}}</text>
-      </view>
+      <text class='tip-text'>{{warningText}}</text>
       <image class='right-arrow' src='../../img/right-arrow.png'></image>
     </view>
   </view>
