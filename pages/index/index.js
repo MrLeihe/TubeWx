@@ -91,6 +91,10 @@ Page({
     shareLatitude: '',
     //是否是分享点击进入小程序
     showShare: false,
+    //上传者用户信息
+    userAvatar: 'https://images.unsplash.com/photo-1499355940597-5601b9869168?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=0a501f2aa74492264ce48c72546450e8&auto=format&fit=crop&w=1567&q=80',
+    userNickname: '笑傲江湖',
+    uploadTime: '一分钟前',
   },
 
   onLoad: function (options) {
@@ -475,6 +479,9 @@ Page({
             praiseCount: info.up,
             isUp: info.isUp ? 1 : 0,
             currentTipInfo: info.message,
+            uploadTime: timeUtil.friendly_time(info.creat_timestamp),
+            userAvatar: info.wx_avatar ? info.wx_avatar : '../../img/default-avatar.png',
+            userNickname: info.nickname ? info.nickname : '匿名'
           })
           //转换为友好时间
           for (var key in dataBean.comment) {

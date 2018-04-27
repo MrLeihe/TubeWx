@@ -7,10 +7,14 @@
       bindtap='bindMapTap'>
       <!--顶部提示-->
       <cover-view class='cover-tip-wrapper' wx:if='{{showTopTip}}' bindtap='showNewMarkerClick'>
-        <cover-image class='trumpet-icon' src='../../img/notification.png'>
+        <cover-image class='tip-bg' src='../../img/tip-bg.png'>
         </cover-image>
-        <cover-view class='tip-text'>{{warningText}}</cover-view>
-        <cover-image class='right-arrow' src='../../img/right-arrow.png'></cover-image>
+        <cover-view class='cover-tip-content'>
+          <cover-image class='trumpet-icon' src='../../img/notification.png'>
+          </cover-image>
+          <cover-view class='tip-text'>{{warningText}}</cover-view>
+          <cover-image class='right-arrow' src='../../img/right-arrow.png'></cover-image>
+        </cover-view>
       </cover-view>
     </map>
     <!--定位当前位置-->
@@ -28,12 +32,12 @@
   <view class='bottom-layout' id='bottom-layout'>
     <view class='bottom-wrapper'>
       <view upload-wrapper wx:if='{{showConfirm}}'>
-
         <!--点击上传情报-->
         <form bindsubmit='confirmClick'>
           <view class='cancel-publish-layout'>
             <view class='cancel-btn flex-center' bindtap='cancelClick'>取消</view>
             <button class='confirm-btn flex-center' form-type='submit'>发布</button>
+            <view class='split-blur-bg' style='position:absolute;top:0'></view>
           </view>
           <view class='line'></view>
           <view class='location-wrapper' bindtap='chooseAddress'>
@@ -59,7 +63,13 @@
 
       <!--情报信息及评论列表-->
       <view class='comment-layout' wx:if='{{showComment}}'>
+        <view class='split-blur-bg'></view>
         <!--上传的情报信息展示-->
+        <view class='upload-user-info'>
+          <image class='user-avatar' src='{{userAvatar}}'></image>
+          <text class='user-nickname'>{{userNickname}}</text>
+          <text class='user-upload-time'>{{uploadTime}}</text>
+        </view>
         <view class='warning-info-layout'>
           <view class='warning-info-wrapper'>
             <image class='warning-info-icon' src='{{warningIconUrl}}' bindtap='previewImage' wx:if='{{warningIconUrl}}' mode='aspectFill'>

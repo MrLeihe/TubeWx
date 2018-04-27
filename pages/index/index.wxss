@@ -16,16 +16,28 @@
 }
 
 .cover-tip-wrapper {
-  width: 90%;
-  margin-left: 5%;
-  height: 80rpx;
+  width: 96%;
+  margin-left: 2%;
+  height: 98rpx;
   margin-top: 20rpx;
-  background-color: rgba(255, 255, 255, 0.8);
   border-radius: 5rpx;
+  position: relative;
+}
+
+.tip-bg{
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  opacity: 0.9;
+}
+
+.cover-tip-content{
+  width: 100%;
+  height: 100%;
+  position: absolute;
   display: flex;
   flex-direction: row;
   align-items: center;
-  box-shadow: 0rpx 0rpx 5rpx #000;
 }
 
 .cover-layout {
@@ -56,34 +68,23 @@
   height: 256rpx;
 }
 
-.top-layout {
-  width: 100%;
-}
-
-.top-tips {
-  height: 80rpx;
-  width: 100%;
-  background-color: #fdffe8;
-  display: flex;
-  align-items: center;
-}
-
 .trumpet-icon {
-  width: 38rpx;
-  height: 36rpx;
+  width: 68rpx;
+  height: 68rpx;
   margin-left: 20rpx;
 }
 
 .tip-text {
   flex: 1;
-  font-size: 28rpx;
-  color: #ff555c;
+  font-size: 32rpx;
+  color: #666;
   text-align: center;
   margin-left: 20rpx;
   margin-right: 20rpx;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-weight: 500;
 }
 
 @keyframes kf-marque-animation {
@@ -259,6 +260,7 @@ button::after {
   width: 126rpx;
   height: 126rpx;
   margin-right: 20rpx;
+  border-radius: 6rpx;
 }
 
 .info-icon {
@@ -660,4 +662,42 @@ button::after {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.upload-user-info{
+  width: 100%;
+  height: 90rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-bottom: 1rpx solid #e5e5e5;
+}
+
+.user-avatar{
+  width: 60rpx;
+  height: 60rpx;
+  margin-left: 40rpx;
+  border-radius: 30rpx;
+}
+
+.user-nickname{
+  flex: 1;
+  font-size: 28rpx;
+  color: #666666;
+  margin-left: 20rpx;
+  font-weight: 500;
+}
+
+.user-upload-time{
+  color: #ff555c;
+  font-size: 24rpx;
+  margin-right: 20rpx;
+}
+
+.split-blur-bg{
+  width: 100%;
+  height: 1rpx;
+  -moz-box-shadow:0px -2px 6px #333333; 
+  -webkit-box-shadow:0px -2px 6px #333333; 
+  box-shadow:0px -2px 6px #333333;
 }
